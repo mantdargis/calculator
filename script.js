@@ -14,13 +14,13 @@ let haveDot = false;
 
 numbersEl.forEach((number) => {
   number.addEventListener("click", (e) => {
-    if (e.target.innerText === "." && !haveDot) {
+    if (e.target.textContent === "." && !haveDot) {
       haveDot = true;
-    } else if (e.target.innerText === "." && haveDot) {
+    } else if (e.target.textContent === "." && haveDot) {
       return;
     }
-    dis2Num += e.target.innerText;
-    display2El.innerText = dis2Num;
+    dis2Num += e.target.textContent;
+    display2El.textContent = dis2Num;
     // console.log();
   });
 });
@@ -29,7 +29,7 @@ operationEl.forEach((operation) => {
   operation.addEventListener("click", (e) => {
     if (!dis2Num) return;
     haveDot = false;
-    const operationName = e.target.innerText;
+    const operationName = e.target.textContent;
     if (dis1Num && dis2Num && lastOperation) {
       mathOperation();
     } else {
@@ -42,10 +42,10 @@ operationEl.forEach((operation) => {
 });
 function clearVar(name = "") {
   dis1Num += dis2Num + " " + name + " ";
-  display1El.innerText = dis1Num;
-  display2El.innerText = "";
+  display1El.textContent = dis1Num;
+  display2El.textContent = "";
   dis2Num = "";
-  tempResultEl.innerText = result;
+  tempResultEl.textContent = result;
 }
 
 function mathOperation() {
@@ -68,8 +68,8 @@ equalEl.addEventListener("click", () => {
   haveDot = false;
   mathOperation();
   clearVar();
-  display2El.innerText = result;
-  tempResultEl.innerText = "";
+  display2El.textContent = result;
+  tempResultEl.textContent = "";
   dis2Num = result;
   dis1Num = "";
 });
@@ -77,13 +77,13 @@ equalEl.addEventListener("click", () => {
 clearAllEl.addEventListener("click", () => {
   dis1Num = "";
   dis2Num = "";
-  display1El.innerText = "";
-  display2El.innerText = "";
+  display1El.textContent = "";
+  display2El.textContent = "";
   result = "";
-  tempResultEl.innerText = "";
+  tempResultEl.textContent = "";
 });
 
 clearLastEl.addEventListener("click", () => {
-  display2El.innerText = "";
+  display2El.textContent = "";
   dis2Num = "";
 });
