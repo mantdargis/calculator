@@ -1,89 +1,120 @@
-const display1El = document.querySelector(".display-1");
-const display2El = document.querySelector(".display-2");
-const tempResultEl = document.querySelector(".temp-result");
-const numbersEl = document.querySelectorAll(".number");
-const operationEl = document.querySelectorAll(".operation");
-const equalEl = document.querySelector(".equal");
-const clearAllEl = document.querySelector(".all-clear");
-const clearLastEl = document.querySelector(".last-entity-clear");
-let dis1Num = "";
-let dis2Num = "";
-let result = null;
-let lastOperation = "";
-let haveDot = false;
+"use strict";
 
-numbersEl.forEach((number) => {
-  number.addEventListener("click", (e) => {
-    if (e.target.textContent === "." && !haveDot) {
-      haveDot = true;
-    } else if (e.target.textContent === "." && haveDot) {
-      return;
-    }
-    dis2Num += e.target.textContent;
-    display2El.textContent = dis2Num;
-    // console.log();
-  });
-});
+var input = document.getElementById('input'), // input/output button
+  number = document.querySelectorAll('.numbers div'), // number buttons
+  operator = document.querySelectorAll('.operators div'), // operator buttons
+  result = document.getElementById('result'), // equal button
+  clear = document.getElementById('clear'), // clear button
+  resultDisplayed = false; // flag to keep an eye on what output is displayed
 
-operationEl.forEach((operation) => {
-  operation.addEventListener("click", (e) => {
-    if (!dis2Num) return;
-    haveDot = false;
-    const operationName = e.target.textContent;
-    if (dis1Num && dis2Num && lastOperation) {
-      mathOperation();
+// adding click handlers to number buttons
+for (var i = 0; i < number.length; i++) {
+  number[i].addEventListener("click", function(e) {
+
+    // storing current input string and its last character in variables - used later
+    var currentString = input.textContent;
+    var lastChar = currentString[currentString.length - 1];
+
+    // if result is not diplayed, just keep adding
+    if (resultDisplayed === false) {
+      input.textContent += e.target.textContent;
+    } else if (resultDisplayed === true && lastChar === "+" || lastChar === "-" || lastChar === "×" || lastChar === "÷") {
+      // if result is currently displayed and user pressed an operator
+      // we need to keep on adding to the string for next operation
+      resultDisplayed = false;
+      input.textContent += e.target.textContent;
     } else {
-      result = parseFloat(dis2Num);
+      // if result is currently displayed and user pressed a number
+      // we need clear the input string and add the new input to start the new opration
+      resultDisplayed = false;
+      input.textContent = "";
+      input.textContent += e.target.textContent;
     }
-    clearVar(operationName);
-    lastOperation = operationName;
-    console.log(result);
+
   });
-});
-function clearVar(name = "") {
-  dis1Num += dis2Num + " " + name + " ";
-  display1El.textContent = dis1Num;
-  display2El.textContent = "";
-  dis2Num = "";
-  tempResultEl.textContent = result;
 }
 
-function mathOperation() {
-  if (lastOperation === "x") {
-    result = parseFloat(result) * parseFloat(dis2Num);
-  } else if (lastOperation === "+") {
-    result = parseFloat(result) + parseFloat(dis2Num);
-  } else if (lastOperation === "-") {
-    result = parseFloat(result) - parseFloat(dis2Num);
-  } else if (lastOperation === "/") {
-    result = parseFloat(result) / parseFloat(dis2Num);
-  } else if (lastOperation === "%") {
-    result = parseFloat(result) % parseFloat(dis2Num);
+// adding click handlers to number buttons
+for (var i = 0; i < operator.length; i++) {
+  operator[i].addEventListener("click", function(e) {
+
+    // storing current input string and its last character in variables - used later
+    var currentString = input.textContent;
+    var lastChar = currentString[currentString.length - 1];
+
+    // if last character entered is an operator, replace it with the currently pressed one
+    if (lastChar === "+" || lastChar === "-" || lastChar === "×" || lastChar === "÷") {
+      var newString = currentString.substring(0, currentString.length - 1) + e.target.innerHTML;
+      input.textContent = newString;
+    } else if (currentString.length == 0) {
+      // if first key pressed is an opearator, don't do anything
+      console.log("enter a number first");
+    } else {
+      // else just add the operator pressed to the input
+      input.textContent += e.target.textContent;
+    }
+
+  });
+}
+
+// on click of 'equal' button
+result.addEventListener("click", function() {
+
+  // this is the string that we will be processing eg. -10+26+33-56*34/23
+  var inputString = input.textContent;
+
+  // forming an array of numbers. eg for above string it will be: numbers = ["10", "26", "33", "56", "34", "23"]
+  var numbers = inputString.split(/\+|\-|\×|\÷/g);
+
+  // forming an array of operators. for above string it will be: operators = ["+", "+", "-", "*", "/"]
+  // first we replace all the numbers and dot with empty string and then split
+  var operators = inputString.replace(/[0-9]|\./g, "").split("");
+
+  console.log(inputString);
+  console.log(operators);
+  console.log(numbers);
+  console.log("----------------------------");
+
+  // now we are looping through the array and doing one operation at a time.
+  // first divide, then multiply, then subtraction and then addition
+  // as we move we are alterning the original numbers and operators array
+  // the final element remaining in the array will be the output
+
+  var divide = operators.indexOf("÷");
+  while (divide != -1) {
+    numbers.splice(divide, 2, numbers[divide] / numbers[divide + 1]);
+    operators.splice(divide, 1);
+    divide = operators.indexOf("÷");
   }
-}
-// operation();
 
-equalEl.addEventListener("click", () => {
-  if (!dis2Num || !dis1Num) return;
-  haveDot = false;
-  mathOperation();
-  clearVar();
-  display2El.textContent = result;
-  tempResultEl.textContent = "";
-  dis2Num = result;
-  dis1Num = "";
+  var multiply = operators.indexOf("×");
+  while (multiply != -1) {
+    numbers.splice(multiply, 2, numbers[multiply] * numbers[multiply + 1]);
+    operators.splice(multiply, 1);
+    multiply = operators.indexOf("×");
+  }
+
+  var subtract = operators.indexOf("-");
+  while (subtract != -1) {
+    numbers.splice(subtract, 2, numbers[subtract] - numbers[subtract + 1]);
+    operators.splice(subtract, 1);
+    subtract = operators.indexOf("-");
+  }
+
+  var add = operators.indexOf("+");
+  while (add != -1) {
+    // using parseFloat is necessary, otherwise it will result in string concatenation :)
+    numbers.splice(add, 2, parseFloat(numbers[add]) + parseFloat(numbers[add + 1]));
+    operators.splice(add, 1);
+    add = operators.indexOf("+");
+  }
+
+  input.innerHTML = numbers[0]; // displaying the output
+
+  resultDisplayed = true; // turning flag if result is displayed
 });
 
-clearAllEl.addEventListener("click", () => {
-  dis1Num = "";
-  dis2Num = "";
-  display1El.textContent = "";
-  display2El.textContent = "";
-  result = "";
-  tempResultEl.textContent = "";
-});
-
-clearLastEl.addEventListener("click", () => {
-  display2El.textContent = "";
-  dis2Num = "";
-});
+// clearing the input on press of clear
+clear.addEventListener("click", function() {
+  input.textContent = "";
+})
