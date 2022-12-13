@@ -14,13 +14,13 @@ let haveDot = false;
 
 numbersEl.forEach((number) => {
   number.addEventListener("click", (e) => {
-    if (e.target.textContent === "." && !haveDot) {
+    if (e.target.innerText === "." && !haveDot) {
       haveDot = true;
-    } else if (e.target.textContent === "." && haveDot) {
+    } else if (e.target.innerText === "." && haveDot) {
       return;
     }
-    dis2Num += e.target.textContent;
-    display2El.textContent = dis2Num;
+    dis2Num += e.target.innerText;
+    display2El.innerText = dis2Num;
     // console.log();
   });
 });
@@ -29,7 +29,7 @@ operationEl.forEach((operation) => {
   operation.addEventListener("click", (e) => {
     if (!dis2Num) return;
     haveDot = false;
-    const operationName = e.target.textContent;
+    const operationName = e.target.innerText;
     if (dis1Num && dis2Num && lastOperation) {
       mathOperation();
     } else {
@@ -42,10 +42,10 @@ operationEl.forEach((operation) => {
 });
 function clearVar(name = "") {
   dis1Num += dis2Num + " " + name + " ";
-  display1El.textContent = dis1Num;
-  display2El.textContent = "";
+  display1El.innerText = dis1Num;
+  display2El.innerText = "";
   dis2Num = "";
-  tempResultEl.textContent = result;
+  tempResultEl.innerText = result;
 }
 
 function mathOperation() {
@@ -68,8 +68,8 @@ equalEl.addEventListener("click", () => {
   haveDot = false;
   mathOperation();
   clearVar();
-  display2El.textContent = result;
-  tempResultEl.textContent = "";
+  display2El.innerText = result;
+  tempResultEl.innerText = "";
   dis2Num = result;
   dis1Num = "";
 });
@@ -77,13 +77,57 @@ equalEl.addEventListener("click", () => {
 clearAllEl.addEventListener("click", () => {
   dis1Num = "";
   dis2Num = "";
-  display1El.textContent = "";
-  display2El.textContent = "";
+  display1El.innerText = "";
+  display2El.innerText = "";
   result = "";
-  tempResultEl.textContent = "";
+  tempResultEl.innerText = "";
 });
 
 clearLastEl.addEventListener("click", () => {
-  display2El.textContent = "";
+  display2El.innerText = "";
   dis2Num = "";
 });
+
+window.addEventListener("keydown", (e) => {
+  if (
+    e.key === "0" ||
+    e.key === "1" ||
+    e.key === "2" ||
+    e.key === "3" ||
+    e.key === "4" ||
+    e.key === "5" ||
+    e.key === "6" ||
+    e.key === "7" ||
+    e.key === "8" ||
+    e.key === "9" ||
+    e.key === "."
+  ) {
+    clickButtonEl(e.key);
+    // console.log(e.key)
+  } else if (e.key === "+" || e.key === "-" || e.key === "/" || e.key === "%") {
+    clickOperation(e.key);
+  } else if (e.key === "*") {
+    clickOperation("x");
+    // console.log(e.key)
+  } else if (e.key == "Enter" || e.key === "=") {
+    clickEqual();
+  }
+  // console.log(e.key)
+});
+function clickButtonEl(key) {
+  numbersEl.forEach((button) => {
+    if (button.innerText === key) {
+      button.click();
+    }
+  });
+}
+function clickOperation(key) {
+  operationEl.forEach((operation) => {
+    if (operation.innerText === key) {
+      operation.click();
+    }
+  });
+}
+function clickEqual() {
+  equalEl.click();
+}
