@@ -43,9 +43,9 @@ operationEl.forEach((operation) => {
 function clearVar(name = "") {
   dis1Num += dis2Num + " " + name + " ";
   display1El.textContent = dis1Num;
-  display2El.innerText = "";
+  display2El.textContent = "";
   dis2Num = "";
-  tempResultEl.innerText = result;
+  tempResultEl.textContent = result;
 }
 
 function mathOperation() {
